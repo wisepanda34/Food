@@ -1,12 +1,15 @@
 'use strict';
+import { requestFile } from './module/clone.js';
 import { operatorRest, operatorSpread } from './module/rest.js';
+
 
 window.addEventListener('DOMContentLoaded', () => {
 
 
 
-	operatorRest();
-	operatorSpread();
+	// operatorRest();
+	// operatorSpread();
+	// requestFile();
 
 
 	//=========TABS====================================================
@@ -111,19 +114,19 @@ window.addEventListener('DOMContentLoaded', () => {
 	//===============================  MODAL  =======================================
 
 	const modal = document.querySelector('.modal');
-	const modalCloseCross = document.querySelector('[data-close]');
 	const modalTrigger = document.querySelectorAll('[data-modal]');
+	// const modalCloseCross = document.querySelector('[data-close]');//убираем т.к. это не работает с динамическим объектом закрытия
 
 
 	function openModal() {
-		modal.classList.toggle('show');
+		modal.classList.add('show');
 		document.body.style.overflow = 'hidden';
 		//если пользователь самостоятельно откроет модалку раньше чем произойдет автовызов, то автовызов мы отключаем
 		clearInterval(modalTimerId);
 	};
 
 	function closeModal() {
-		modal.classList.toggle('show');
+		modal.classList.remove('show');
 		document.body.style.overflow = '';
 	}
 
@@ -131,23 +134,25 @@ window.addEventListener('DOMContentLoaded', () => {
 		item.addEventListener('click', openModal);
 	});
 
-	modalCloseCross.addEventListener('click', closeModal);
+	// modalCloseCross.addEventListener('click', closeModal);
 
 	modal.addEventListener('click', (e) => {
-		if (e.target === modal) {
+		//добавляем в условие клик по любому объекту с атрибутом 'data-close' в том числе и динамические
+		if (e.target === modal || e.target.getAttribute('data-close') == '') {
 			closeModal();
 		}
 	});
 
 	document.addEventListener('keydown', (e) => {
-		e.preventDefault();
+
 		if (e.code === "Escape" && modal.classList.contains('show')) {
 			closeModal();
+
 		}
 	});
 
 	//автовызов функции 
-	const modalTimerId = setTimeout(openModal, 5000);
+	const modalTimerId = setTimeout(openModal, 50000);
 
 	function modalByScroll() {
 		if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -237,5 +242,102 @@ window.addEventListener('DOMContentLoaded', () => {
 		'.menu .container',
 		// 'menu__item'
 	).render();
+
+	//============= FORMS ====================
+	//------отправка 'POST'-запроса на сервер  ---  
+
+	const forms = document.querySelectorAll('form');
+	const message = {
+		// loading: 'Loading',
+		loading: 'img/spinner/spinner.svg',
+		succes: 'Thank you, we call you soon!',
+		failure: 'Something went wrong...'
+	};
+
+	forms.forEach(item => {
+		postData(item);
+	});
+
+	function postData(form) {
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+
+			const statusMessage = document.createElement('img');
+			// statusMessage.classList.add('status');
+			// statusMessage.textContent = message.loading;
+			statusMessage.src = message.loading;
+			statusMessage.style.cssText = `
+						display: block;
+						margin: 0 auto; 
+			`;
+
+			// form.append(statusMessage);
+			//Вставим сообщение за формой
+			form.insertAdjacentElement('afterend', statusMessage)
+
+			const request = new XMLHttpRequest();//это встроенный в браузер объект, который даёт возможность делать HTTP-запросы к серверу без перезагрузки страницы
+			request.open('POST', 'server.php');
+
+			//второй аргумент отвечает за формат отправляемого запроса, зависит от того, в каком формате принимает запросы бекэнд
+			// request.setRequestHeader('Content-type', 'multipart/form-data');
+			request.setRequestHeader('Content-type', 'application/json');
+
+			//критически важно чтобы в инпутах были прописаны атребуты 'name', по ним будет произведен поиск 
+			const formData = new FormData(form);//это объект, представляющий данные HTML формы
+
+			//для отправки в json-формате перобразовуем FormData-объект в JSON-объект,
+			// также необходимо в php-файле прописать код по декодированию JSON-данных
+			const object = {};
+			formData.forEach((value, key) => {
+				object[key] = value;
+			});
+			const json = JSON.stringify(object);
+
+
+			// request.send(formData);
+			request.send(json);
+
+			request.addEventListener('load', () => {
+				if (request.status === 200) {
+					console.log(request.response);
+					showThanksModal(message.succes);
+					form.reset();
+					statusMessage.remove();
+
+				} else {
+					showThanksModal(message.failure);
+				}
+			});
+		});
+	};
+
+	function showThanksModal(message) {
+
+		const prevModalDialog = document.querySelector('.modal__dialog');
+
+		prevModalDialog.classList.add('hide');
+		openModal();
+
+		const thanksModal = document.createElement('div');
+		thanksModal.classList.add('modal__dialog');
+		thanksModal.innerHTML = `
+		<div class="modal__content"> 
+			<div class="modal__close" data-close>×</div>
+			<div class="modal__title">${message} </div> 
+		</div>  
+		`;
+
+		document.querySelector('.modal').append(thanksModal);
+
+		setTimeout(() => {
+			thanksModal.remove();
+			prevModalDialog.classList.add('show');
+			prevModalDialog.classList.remove('hide');
+			closeModal();
+
+		}, 2000);
+
+	};
+
 
 });
