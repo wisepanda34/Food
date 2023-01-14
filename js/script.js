@@ -29,7 +29,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	function showTabsContemt(i = 0) {
+	function showTabsContent(i = 0) {
 		tabs[i].classList.add('tabheader__item_active');
 		tabsContent[i].classList.remove('hide');
 		tabsContent[i].classList.add('show', 'fade');
@@ -41,14 +41,14 @@ window.addEventListener('DOMContentLoaded', () => {
 			tabs.forEach((item, i) => {
 				if (e.target == item) {
 					hideTabsContent();
-					showTabsContemt(i);
+					showTabsContent(i);
 				}
 			});
 		}
 	});
 
 	hideTabsContent();
-	showTabsContemt();
+	showTabsContent();
 
 	//======================TIMER====================================
 
