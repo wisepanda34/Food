@@ -80,6 +80,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			return num;
 		}
 	}
+
 	//3)функция связывания коллекции по клаасу и #id, запуск setInterval
 	function setClock(selector, endtime) {
 		const timer = document.querySelector(selector),
@@ -96,6 +97,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		function updateClock() {
 			const t = getTimeRemaining(endtime);
 
+			//добавление нуля к однозначным числам
 			days.innerHTML = getZero(t.days);
 			hours.innerHTML = getZero(t.hours);
 			minuts.innerHTML = getZero(t.minuts);
@@ -147,67 +149,28 @@ window.addEventListener('DOMContentLoaded', () => {
 
 		if (e.code === "Escape" && modal.classList.contains('show')) {
 			closeModal();
-
 		}
 	});
 
 	//автовызов функции 
 	const modalTimerId = setTimeout(openModal, 50000);
 
+	//функция вызова модального окна при досклолливании до низа сайта
 	function modalByScroll() {
 		if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
 			openModal();
 
-			//для предупреждения повторного открытия модалки при концевом скроллинге
+			//для предупреждения повторного открытия модального окна при концевом скроллинге
 			window.removeEventListener('scroll', modalByScroll);
 		}
 	}
 
-	//настойка автовызова модалки при проскролле до низа сайта
+	// автовызов модального окна при проскролле до низа сайта
 	window.addEventListener('scroll', modalByScroll);
 
 
 	//===========  class  ====================================================
-
-
-	// class MenuCard {
-	// 	constructor(src, alt, title, descr, price, parentSelector, ...classes) {
-	// 		this.src = src;
-	// 		this.alt = alt;
-	// 		this.title = title;
-	// 		this.descr = descr;
-	// 		this.price = price;
-	// 		this.parent = document.querySelector(parentSelector);
-	// 		this.classes = classes;
-	// 		this.transfer = 27;
-	// 		this.changeToUAH();
-	// 	}
-	// 	changeToUAH() {
-	// 		this.price = +this.price * +this.transfer;
-	// 	}
-	// 	render() {
-	// 		const element = document.createElement('div');
-	// 		if (this.classes.length === 0) {
-	// 			element.classList.add('menu__item');
-	// 		} else {
-	// 			this.classes.forEach(className => element.classList.add(className));
-	// 		}
-
-	// 		element.innerHTML = `
-	// 			<img src=${this.src} alt=${this.alt}>
-	// 			<h3 class="menu__item-subtitle">${this.title}</h3>
-	// 			<div class="menu__item-descr">${this.descr}</div>
-	// 			<div class="menu__item-divider"></div>
-	// 			<div class="menu__item-price">
-	// 					<div class="menu__item-cost">Цена:</div>
-	// 					<div class="menu__item-total"><span>${this.price}</span> грн/день</div>  
-	// 			</div>
-	// 		`;
-
-	// 		this.parent.append(element);
-	// 	}
-	// }
-
+	// --- GET-запрос,
 	const getResource = async (url) => {
 
 		const res = await fetch(url);
@@ -218,18 +181,11 @@ window.addEventListener('DOMContentLoaded', () => {
 	};
 
 
-	// getResource('http://localhost:3000/menu')
-	// 	.then(data => {
-	// 		data.forEach(({ img, altimg, title, descr, price }) => {
-	// 			new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
-	// 		});
-	// 	});
-
-
-
 	getResource('http://localhost:3000/menu')
 		.then(data => createCard(data));
 
+
+	//функция динамического создание элементов с данными от сервера
 	function createCard(data) {
 		data.forEach(({ img, altimg, title, descr, price }) => {
 			const element = document.createElement('div');
@@ -253,8 +209,9 @@ window.addEventListener('DOMContentLoaded', () => {
 	//------отправка 'POST'-запроса на сервер  ---  
 
 	const forms = document.querySelectorAll('form');
+
+	//объект с информированием пользователя  о процессах
 	const message = {
-		// loading: 'Loading',
 		loading: 'img/spinner/spinner.svg',
 		success: 'Thank you, we call you soon!',
 		failure: 'Something went wrong...'
@@ -264,36 +221,41 @@ window.addEventListener('DOMContentLoaded', () => {
 		bindPostData(item);
 	});
 
+	//  функциональное выражение, отвечающее за отправку POST на сервер
 	const postData = async (url, data) => {
-
+		//fetch  возвращает промис, который помещаем в переменную res
 		const res = await fetch(url, {
 			method: "POST",
 			headers: {
 				'Content-type': 'application/json'
 			},
-			body: data,
+			body: data
 		});
 
 		return await res.json();
 	};
 
+	//функция отвечает за привязку постинга
 	function bindPostData(form) {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
 
+			//создание и вывод спиннера ожидания запроса
 			const statusMessage = document.createElement('img');
-
 			statusMessage.src = message.loading;
 			statusMessage.style.cssText = `
 						display: block;
 						margin: 0 auto; 
 			`;
 
-			const formData = new FormData(form);//это объект, представляющий данные HTML формы
+			//это объект, представляющий данные HTML формы
+			const formData = new FormData(form);
 
+			//преобразование FormData до json-объекта
 			const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-			postData('http://localhost:3000/menu', JSON.stringify(json))
+			//вызов функции отправки пост-запроса с последующей его обработкой 
+			postData('http://localhost:3000/requests', JSON.stringify(json))
 				.then(data => {
 					console.log(data);
 					showThanksModal(message.success);
@@ -309,6 +271,8 @@ window.addEventListener('DOMContentLoaded', () => {
 		});
 	};
 
+
+	//функция вывода информирования пользователя о статусе пост-запроса
 	function showThanksModal(message) {
 
 		const prevModalDialog = document.querySelector('.modal__dialog');
