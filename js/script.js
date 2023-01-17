@@ -361,7 +361,7 @@ window.addEventListener('DOMContentLoaded', () => {
 				border-top: 10px solid transparent;
 				border-bottom: 10px solid transparent;
 				opacity: .5;
-				transition: opacity .6s ease;
+				transition: opacity .5s ease;
 		`;
 
 		if (i == 0) {
@@ -372,22 +372,21 @@ window.addEventListener('DOMContentLoaded', () => {
 		dots.push(dot);
 	}
 
-	//проверка и добавления нуля к однозначным числам
-	if (slides.length < 10) {
-		total.textContent = `0${slides.length}`;
-		current.textContent = `0${slideIndex}`;
-	} else {
-		total.textContent = slides.length;
-		current.textContent = slideIndex;
+	addZeroTotal();
+	addZeroCurrent();
+
+	//функция содержит регулярное выражение, оставляет цифры обрезая не числа('px' преобразовует в '')
+	function deleteNotDigits(str) {
+		return +str.replace(/\D/g, '');
 	}
 
 	next.addEventListener('click', () => {
-		if (offset == +width.slice(0, width.length - 2) * (slides.length - 1)) {
+		if (offset == deleteNotDigits(width) * (slides.length - 1)) {
 			offset = 0;
 		} else {
-			offset += +width.slice(0, width.length - 2);
+			offset += deleteNotDigits(width);
 		}
-
+		//интерполяция
 		slidesField.style.transform = `translateX(-${offset}px)`;
 
 		if (slideIndex == slides.length) {
@@ -397,23 +396,18 @@ window.addEventListener('DOMContentLoaded', () => {
 			slideIndex++;
 		}
 
-		if (slides.length < 10) {
-			current.textContent = `0${slideIndex}`;
-		} else {
-			current.textContent = slideIndex;
-		}
+		addZeroCurrent();
 
 		dots.forEach(dot => dot.style.opacity = '.5');
 		dots[slideIndex - 1].style.opacity = '1';
-
 
 	});
 
 	prev.addEventListener('click', () => {
 		if (offset == 0) {
-			offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+			offset = deleteNotDigits(width) * (slides.length - 1);
 		} else {
-			offset -= +width.slice(0, width.length - 2);
+			offset -= deleteNotDigits(width);
 		}
 
 		slidesField.style.transform = `translateX(-${offset}px)`;
@@ -425,78 +419,45 @@ window.addEventListener('DOMContentLoaded', () => {
 			slideIndex--;
 		}
 
-		if (slides.length < 10) {
-			current.textContent = `0${slideIndex}`;
-		} else {
-			current.textContent = slideIndex;
-		}
+		addZeroCurrent();
 
 		dots.forEach(dot => dot.style.opacity = '.5');
 		dots[slideIndex - 1].style.opacity = '1';
 	});
 
+	//реагирование на клики по дотам
 	dots.forEach(dot => {
 		dot.addEventListener('click', (e) => {
 			const slideTo = e.target.getAttribute('data-slide-to');
 
 			slideIndex = slideTo;
-			offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+			offset = deleteNotDigits(width) * (slideTo - 1);
 			slidesField.style.transform = `translateX(-${offset}px)`;
 
-			if (slides.length < 10) {
-				current.textContent = `0${slideIndex}`;
-			} else {
-				current.textContent = slideIndex;
-			}
+			addZeroCurrent();
 
 			dots.forEach(dot => dot.style.opacity = '.5');
 			dots[slideIndex - 1].style.opacity = '1';
 		});
 	})
 
-
-	// ---- simple slider way ---------
-
-	/* 
-	showSlides(slideIndex);
-
-	//проверка и добавления нуля к однозначным числам
-	if (slides.length < 10) {
-		total.textContent = `0${slides.length}`;
-	} else {
-		total.textContent = slides.length;
-	}
-
-	function showSlides(n) {
-		if (n > slides.length) {
-			slideIndex = 1;
-		}
-		if (n < 1) {
-			slideIndex = slides.length
-		}
-
-		slides.forEach(item => item.style.display = 'none');
-
-		slides[slideIndex - 1].style.display = 'block';
-
+	//функции добавления нуля к однозначным числам
+	function addZeroCurrent() {
 		if (slides.length < 10) {
 			current.textContent = `0${slideIndex}`;
 		} else {
 			current.textContent = slideIndex;
 		}
 	}
-
-	function plusSlides(n) {
-		showSlides(slideIndex += n);
+	function addZeroTotal() {
+		if (slides.length < 10) {
+			total.textContent = `0${slides.length}`;
+		} else {
+			total.textContent = slides.length;
+		}
 	}
 
-	prev.addEventListener('click', () => {
-		plusSlides(-1);
-	})
 
-	next.addEventListener('click', () => {
-		plusSlides(1);
-	})
- */
+
 
 });
