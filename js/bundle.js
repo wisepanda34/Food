@@ -1,239 +1,137 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
+var __webpack_exports__ = {};
+/*!**********************!*\
+  !*** ./js/script.js ***!
+  \**********************/
 
-/***/ "./js/modules/calc.js":
-/*!****************************!*\
-  !*** ./js/modules/calc.js ***!
-  \****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+// import { requestFile } from './modules/clone.js';
+// import { operatorRest, operatorSpread } from './modules/rest.js';
 
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function calc() {
+// import modal from './modules/modal';
+// import tabs from './modules/tabs';
+// import timer from './modules/timer';
+// import cards from './modules/cards';
+// import calc from './modules/calc';
+// import forms from './modules/forms';
+// import slider from './modules/slider';
 
-	// ==============  Calc  =======================
-	const result = document.querySelector('.calculating__result span');
-	let sex, weight, height, age, ratio;
+window.addEventListener('DOMContentLoaded', () => {
 
-	if (localStorage.getItem('sex')) {
-		sex = localStorage.getItem('sex');
-	} else {
-		sex = 'female';
-		localStorage.setItem('sex', 'female');
+
+	// tabs();
+	// modal();
+	// timer();
+	// cards();
+	// calc();
+	// forms();
+	// slider();
+
+
+
+	// operatorRest();
+	// operatorSpread();
+	// requestFile();
+
+	//=========TABS====================================================
+	const tabs = document.querySelectorAll('.tabheader__item');
+	const tabParent = document.querySelector('.tabheader__items');
+	const tabsContent = document.querySelectorAll('.tabcontent');
+
+	function hideTabsContent() {
+		tabs.forEach(item => {
+			item.classList.remove('tabheader__item_active');
+		});
+
+		tabsContent.forEach(item => {
+			item.classList.remove('show', 'fade');
+			item.classList.add('hide');
+
+		});
 	}
 
-	if (localStorage.getItem('ratio')) {
-		ratio = localStorage.getItem('ratio');
-	} else {
-		ratio = 1.375;
-		localStorage.setItem('retio', 1.375);
+	function showTabsContent(i = 0) {
+		tabs[i].classList.add('tabheader__item_active');
+		tabsContent[i].classList.remove('hide');
+		tabsContent[i].classList.add('show', 'fade');
 	}
 
-	function initLocalSettings(selector, activeClass) {
-		const elements = document.querySelectorAll(selector);
-
-		elements.forEach(elem => {
-			elem.classList.remove(activeClass);
-			if (elem.getAttribute('id') === localStorage.getItem('sex')) {
-				elem.classList.add(activeClass);
-			}
-			if (elem.getAttribute('data-ratio') === localStorage.getItem('ratio')) {
-				elem.classList.add(activeClass);
-			}
-		})
-	}
-
-	initLocalSettings('#gender div', 'calculating__choose-item_active');
-	initLocalSettings('.calculating__choose_big div', 'calculating__choose-item_active');
-
-
-
-	function calcTotal() {
-		if (!sex || !weight || !height || !age || !ratio) {
-			result.textContent = 'input all fields!';
-			return;
-		} else if (sex === 'female') {
-			result.textContent = Math.round((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio);
-		} else {
-			result.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio);
-		}
-	}
-	calcTotal();
-
-	function getStaticInformation(selector, activeClass) {
-		const elements = document.querySelectorAll(selector);
-
-		elements.forEach(elem => {
-			elem.addEventListener('click', (e) => {
-
-				if (e.target.getAttribute('data-ratio')) {
-					ratio = +e.target.getAttribute('data-ratio');
-
-					//ложим в память браузера выбранные пользователем параметры
-					localStorage.setItem('ratio', +e.target.getAttribute('data-ratio'));
-				} else {
-					sex = e.target.getAttribute('id');
-					localStorage.setItem('sex', e.target.getAttribute('id'));
+	tabParent.addEventListener('click', (e) => {
+		e.preventDefault();
+		if (e.target && e.target.classList.contains('tabheader__item')) {
+			tabs.forEach((item, i) => {
+				if (e.target == item) {
+					hideTabsContent();
+					showTabsContent(i);
 				}
-
-				calcTotal();
-
-				elements.forEach(item => {
-					item.classList.remove(activeClass);
-				})
-				e.target.classList.add(activeClass);
-			})
-		})
-	}
-
-	getStaticInformation('#gender div', 'calculating__choose-item_active');
-	getStaticInformation('.calculating__choose_big div', 'calculating__choose-item_active');
-
-	function getDynamicInformation(selector) {
-
-		const input = document.querySelector(selector);
-
-		input.addEventListener('input', () => {
-
-			// ПРОВЕРКА НА НЕ ЧИСЛА	
-			if (input.value.match(/\D/)) {
-				input.style.border = '1px solid red';
-			} else {
-				input.style.border = 'none';
-			}
-
-			switch (input.getAttribute('id')) {
-				case 'height':
-					height = +input.value;
-					break;
-				case 'weight':
-					weight = +input.value;
-					break;
-				case 'age':
-					age = +input.value;
-					break;
-			}
-			calcTotal();
-		});
-	}
-	getDynamicInformation('#height');
-	getDynamicInformation('#weight');
-	getDynamicInformation('#age');
-
-
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (calc);
-
-/***/ }),
-
-/***/ "./js/modules/cards.js":
-/*!*****************************!*\
-  !*** ./js/modules/cards.js ***!
-  \*****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function cards() {
-
-	//===========  class for cards ====================================================
-	// --- GET-запрос,
-	const getResource = async (url) => {
-
-		const res = await fetch(url);
-		if (!res.ok) {
-			throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+			});
 		}
-		return await res.json();
-	};
+	});
+
+	hideTabsContent();
+	showTabsContent();
+
+	//======================TIMER=================================
+
+	//1)дата окончания акции
+	const deadline = '2023-02-15';
+
+	//2)функция вычисления сколько осталось милисекунд и разложение на дни, часы, минуты, секунды
+	function getTimeRemaining(endtime) {
+
+		const t = Date.parse(endtime) - Date.parse(new Date());
+		const days = Math.floor(t / (1000 * 60 * 60 * 24));
+		const hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+		const minuts = Math.floor((t / 1000 / 60) % 60);
+		const seconds = Math.floor((t / 1000) % 60);
+
+		return {
+			'total': t,
+			'days': days,
+			'hours': hours,
+			'minuts': minuts,
+			'seconds': seconds
+		};
+	}
+	//5)функция помощник проверки на односимвольное число и возрат если нужно с нулем впереди
+	function getZero(num) {
+		if (num >= 0 && num < 10) {
+			return `0${num}`;
+		} else {
+			return num;
+		}
+	}
+
+	//3)функция связывания коллекции по клаасу и #id, запуск setInterval
+	function setClock(selector, endtime) {
+		const timer = document.querySelector(selector),
+			days = timer.querySelector('#days'),
+			hours = timer.querySelector('#hours'),
+			minuts = timer.querySelector('#minutes'),
+			seconds = timer.querySelector('#seconds'),
+			timeInterval = setInterval(updateClock, 1000);
+
+		//для мгновенного обновления даты на сайте вызываем функцию updateClock() сразу при загрузке страницы
+		updateClock();
+
+		//4)функция обновления данных остатка времени на сайте: запрос на функцию вычисления с аргументом конечного времени, присваивание возвращенных данных с предварительной проверкой функцией-помощником, проверка на окончание отсчета и прерывание таймера
+		function updateClock() {
+			const t = getTimeRemaining(endtime);
+
+			//добавление нуля к однозначным числам
+			days.innerHTML = getZero(t.days);
+			hours.innerHTML = getZero(t.hours);
+			minuts.innerHTML = getZero(t.minuts);
+			seconds.innerHTML = getZero(t.seconds);
 
 
-	getResource('http://localhost:3000/menu')
-		.then(data => createCard(data));
-
-
-	//функция динамического создание элементов с данными от сервера
-	function createCard(data) {
-		data.forEach(({ img, altimg, title, descr, price }) => {
-			const element = document.createElement('div');
-
-			element.classList.add('menu__item');
-
-			element.innerHTML = `
-			<img src=${img} alt=${altimg}>
-			<h3 class="menu__item-subtitle">${title}</h3>
-			<div class="menu__item-descr">${descr}</div>
-			<div class="menu__item-divider"></div>
-			<div class="menu__item-price">
-					<div class="menu__item-cost">Цена:</div>
-					<div class="menu__item-total"><span>${price}</span> грн/день</div>  
-			</div>
-				`;
-			document.querySelector('.menu .container').append(element);
-		});
-	};
-
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (cards);
-
-/***/ }),
-
-/***/ "./js/modules/clone.js":
-/*!*****************************!*\
-  !*** ./js/modules/clone.js ***!
-  \*****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "requestFile": () => (/* binding */ requestFile)
-/* harmony export */ });
-
-const requestCode = {
-
-	requestFile: function () {
-
-		const persone = {
-			name: 'Alex',
-			tel: '+74444444',
-			parent: {
-				mom: 'Olga',
-				dad: 'Mike'
+			if (t.total <= 0) {
+				clearInterval(timeInterval);
 			}
 		}
-
-		const clonePersone = JSON.parse(JSON.stringify(persone));
-		clonePersone.parent.mom = 'Ann';
-		console.log(persone);
-		console.log(clonePersone);
-
-
-
 	}
-
-};
-const requestFile = requestCode.requestFile;
-
-/***/ }),
-
-/***/ "./js/modules/modal.js":
-/*!*****************************!*\
-  !*** ./js/modules/modal.js ***!
-  \*****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function modal() {
+	//6)вызов функции с передачей аргументов: переменная класса родителя даты на сайте и deadline(конечная дата отсчета)
+	setClock('.timer', deadline);
 
 
 	//=============  MODAL  ====================
@@ -292,113 +190,139 @@ function modal() {
 	window.addEventListener('scroll', modalByScroll);
 
 
+	//===========  class for cards ====================================================
+	// --- GET-запрос,
+	const getResource = async (url) => {
 
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (modal);
-
-/***/ }),
-
-/***/ "./js/modules/rest.js":
-/*!****************************!*\
-  !*** ./js/modules/rest.js ***!
-  \****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "operatorRest": () => (/* binding */ operatorRest),
-/* harmony export */   "operatorSpread": () => (/* binding */ operatorSpread)
-/* harmony export */ });
-//подключение js-файла в главный js-файл:
-// 1) в главном js-файле :  import funcRest from './rest.js';
-// 2) index.html к тегу script добавит атрибут type="module" 
-// 3)  в дополнительном js-файле: весь код обворачиваем в функцию и экпортируем ее с помощью -  export default name; 
-//Более универсальный вариант: заталкиваем функции в виде значений в объект, а потом по ключам вызываем их, передаем в главный файл через переменные    
-
-//Остаточные параметры (rest parameters)
-// Синтаксис остаточных параметров функции позволяет представлять неограниченное множество аргументов в виде массива.
-
-
-
-const helpers = {
-
-	operatorRest: function () {
-
-		const log = function (a, b, ...rest) {
-			console.log(a, b, ...rest);
-			console.log(a, b, rest);
+		const res = await fetch(url);
+		if (!res.ok) {
+			throw new Error(`Could not fetch ${url}, status: ${res.status}`);
 		}
-		//'rew', 'fop' попадают в массив благодаря  "...rest"
-		log('ada', 'boy', 'rew', 'fop');
-
-		function calcOrDouble(number, basis = 5) {
-			console.log(number * basis);
-		}
-		calcOrDouble(3, 7);
-
-	},
-
-	operatorSpread: function () {
-
-		const cityUSA = ['New-York', 'Los-Angeles', 'Washington', 'Mayami']
-		const cityEurope = ['London', 'Paris', 'Kiyv']
-
-		console.log(...cityUSA);
-		console.log(...cityEurope);
+		return await res.json();
+	};
 
 
-		//метод  concat, более старший метод
-		const allCitiesConcat = cityEurope.concat(cityUSA);
-		console.log(allCitiesConcat);
-		// spread - более мощный
-		const allCities = [...cityUSA, 'Rome', ...cityEurope]
-		console.log(allCities);
-
-		// spread -  дает возможность работать с объектами
-		const populationUSA = {
-			'New-York': 15,
-			'Los-Angeles': 10,
-			Washington: 7,
-			Mayami: 3,
-		};
-		const populationEU = {
-			London: 17,
-			Paris: 8,
-			Kiyv: 5,
-			Mayami: 5,
-		};
-		const populationAll = ({ ...populationUSA, ...populationEU });
-		console.log(populationAll);
-
-		//с помощью spread мы можем коллекцию преобразовать в массив и работать с ним как с массивом, т.е. использовать все методы массива (map, filter, etc)
-		const divs = document.querySelectorAll('div');
-		const nodes = [...divs];
+	getResource('http://localhost:3000/menu')
+		.then(data => createCard(data));
 
 
+	//функция динамического создание элементов с данными от сервера
+	function createCard(data) {
+		data.forEach(({ img, altimg, title, descr, price }) => {
+			const element = document.createElement('div');
+
+			element.classList.add('menu__item');
+
+			element.innerHTML = `
+			<img src=${img} alt=${altimg}>
+			<h3 class="menu__item-subtitle">${title}</h3>
+			<div class="menu__item-descr">${descr}</div>
+			<div class="menu__item-divider"></div>
+			<div class="menu__item-price">
+					<div class="menu__item-cost">Цена:</div>
+					<div class="menu__item-total"><span>${price}</span> грн/день</div>  
+			</div>
+				`;
+			document.querySelector('.menu .container').append(element);
+		});
+	};
+
+	//============= FORMS ====================
+	//------отправка 'POST'-запроса на сервер  ---  
+
+	const forms = document.querySelectorAll('form');
+
+	//объект с информированием пользователя  о процессах
+	const message = {
+		loading: 'img/spinner/spinner.svg',
+		success: 'Thank you, we call you soon!',
+		failure: 'Something went wrong...'
+	};
+
+	forms.forEach(item => {
+		bindPostData(item);
+	});
+
+	//  функциональное выражение, отвечающее за отправку POST на сервер
+	const postData = async (url, data) => {
+		//fetch  возвращает промис, который помещаем в переменную res
+		const res = await fetch(url, {
+			method: "POST",
+			headers: {
+				'Content-type': 'application/json'
+			},
+			body: data
+		});
+
+		return await res.json();
+	};
+
+	//функция отвечает за привязку постинга
+	function bindPostData(form) {
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+
+			//создание и вывод спиннера ожидания запроса
+			const statusMessage = document.createElement('img');
+			statusMessage.src = message.loading;
+			statusMessage.style.cssText = `
+						display: block;
+						margin: 0 auto; 
+			`;
+
+			//это объект, представляющий данные HTML формы
+			const formData = new FormData(form);
+
+			//преобразование FormData до json-объекта
+			const json = JSON.stringify(Object.fromEntries(formData.entries()));
+
+			//вызов функции отправки пост-запроса с последующей его обработкой 
+			postData('http://localhost:3000/requests', JSON.stringify(json))
+				.then(data => {
+					console.log(data);
+					showThanksModal(message.success);
+
+					statusMessage.remove();
+				})
+				.catch(() => {
+					showThanksModal(message.failure);
+				}).finally(() => {
+					form.reset();
+				});
+
+		});
+	};
 
 
-	},
+	//функция вывода информирования пользователя о статусе пост-запроса
+	function showThanksModal(message) {
 
-}
+		const prevModalDialog = document.querySelector('.modal__dialog');
 
-// export default funcRest;    так делаем если экпортируем одну функцию по дефолту
-const operatorRest = helpers.operatorRest;
-const operatorSpread = helpers.operatorSpread;
+		prevModalDialog.classList.add('hide');
+		openModal();
 
-/***/ }),
+		const thanksModal = document.createElement('div');
+		thanksModal.classList.add('modal__dialog');
+		thanksModal.innerHTML = `
+		<div class="modal__content"> 
+			<div class="modal__close" data-close>×</div>
+			<div class="modal__title">${message} </div> 
+		</div>  
+		`;
 
-/***/ "./js/modules/slider.js":
-/*!******************************!*\
-  !*** ./js/modules/slider.js ***!
-  \******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+		document.querySelector('.modal').append(thanksModal);
 
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function slider() {
+		setTimeout(() => {
+			thanksModal.remove();
+			prevModalDialog.classList.add('show');
+			prevModalDialog.classList.remove('hide');
+			closeModal();
+
+		}, 2000);
+
+	};
+
 
 	//================  SLIDER  =============================
 
@@ -556,257 +480,117 @@ function slider() {
 		}
 	}
 
+	// ==============  Calc  =======================
+	const result = document.querySelector('.calculating__result span');
+	let sex, weight, height, age, ratio;
 
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (slider);
-
-/***/ }),
-
-/***/ "./js/modules/tabs.js":
-/*!****************************!*\
-  !*** ./js/modules/tabs.js ***!
-  \****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function tabs() {
-
-	//=========TABS====================================================
-	const tabs = document.querySelectorAll('.tabheader__item');
-	const tabParent = document.querySelector('.tabheader__items');
-	const tabsContent = document.querySelectorAll('.tabcontent');
-
-	function hideTabsContent() {
-		tabs.forEach(item => {
-			item.classList.remove('tabheader__item_active');
-		});
-
-		tabsContent.forEach(item => {
-			item.classList.remove('show', 'fade');
-			item.classList.add('hide');
-
-		});
+	if (localStorage.getItem('sex')) {
+		sex = localStorage.getItem('sex');
+	} else {
+		sex = 'female';
+		localStorage.setItem('sex', 'female');
 	}
 
-	function showTabsContent(i = 0) {
-		tabs[i].classList.add('tabheader__item_active');
-		tabsContent[i].classList.remove('hide');
-		tabsContent[i].classList.add('show', 'fade');
+	if (localStorage.getItem('ratio')) {
+		ratio = localStorage.getItem('ratio');
+	} else {
+		ratio = 1.375;
+		localStorage.setItem('retio', 1.375);
 	}
 
-	tabParent.addEventListener('click', (e) => {
-		e.preventDefault();
-		if (e.target && e.target.classList.contains('tabheader__item')) {
-			tabs.forEach((item, i) => {
-				if (e.target == item) {
-					hideTabsContent();
-					showTabsContent(i);
-				}
-			});
-		}
-	});
+	function initLocalSettings(selector, activeClass) {
+		const elements = document.querySelectorAll(selector);
 
-	hideTabsContent();
-	showTabsContent();
-
-
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (tabs);
-
-/***/ }),
-
-/***/ "./js/modules/timer.js":
-/*!*****************************!*\
-  !*** ./js/modules/timer.js ***!
-  \*****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function timer() {
-
-	//======================TIMER=================================
-
-	//1)дата окончания акции
-	const deadline = '2023-02-15';
-
-	//2)функция вычисления сколько осталось милисекунд и разложение на дни, часы, минуты, секунды
-	function getTimeRemaining(endtime) {
-
-		const t = Date.parse(endtime) - Date.parse(new Date());
-		const days = Math.floor(t / (1000 * 60 * 60 * 24));
-		const hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-		const minuts = Math.floor((t / 1000 / 60) % 60);
-		const seconds = Math.floor((t / 1000) % 60);
-
-		return {
-			'total': t,
-			'days': days,
-			'hours': hours,
-			'minuts': minuts,
-			'seconds': seconds
-		};
-	}
-	//5)функция помощник проверки на односимвольное число и возрат если нужно с нулем впереди
-	function getZero(num) {
-		if (num >= 0 && num < 10) {
-			return `0${num}`;
-		} else {
-			return num;
-		}
-	}
-
-	//3)функция связывания коллекции по клаасу и #id, запуск setInterval
-	function setClock(selector, endtime) {
-		const timer = document.querySelector(selector),
-			days = timer.querySelector('#days'),
-			hours = timer.querySelector('#hours'),
-			minuts = timer.querySelector('#minutes'),
-			seconds = timer.querySelector('#seconds'),
-			timeInterval = setInterval(updateClock, 1000);
-
-		//для мгновенного обновления даты на сайте вызываем функцию updateClock() сразу при загрузке страницы
-		updateClock();
-
-		//4)функция обновления данных остатка времени на сайте: запрос на функцию вычисления с аргументом конечного времени, присваивание возвращенных данных с предварительной проверкой функцией-помощником, проверка на окончание отсчета и прерывание таймера
-		function updateClock() {
-			const t = getTimeRemaining(endtime);
-
-			//добавление нуля к однозначным числам
-			days.innerHTML = getZero(t.days);
-			hours.innerHTML = getZero(t.hours);
-			minuts.innerHTML = getZero(t.minuts);
-			seconds.innerHTML = getZero(t.seconds);
-
-
-			if (t.total <= 0) {
-				clearInterval(timeInterval);
+		elements.forEach(elem => {
+			elem.classList.remove(activeClass);
+			if (elem.getAttribute('id') === localStorage.getItem('sex')) {
+				elem.classList.add(activeClass);
 			}
+			if (elem.getAttribute('data-ratio') === localStorage.getItem('ratio')) {
+				elem.classList.add(activeClass);
+			}
+		})
+	}
+
+	initLocalSettings('#gender div', 'calculating__choose-item_active');
+	initLocalSettings('.calculating__choose_big div', 'calculating__choose-item_active');
+
+
+
+	function calcTotal() {
+		if (!sex || !weight || !height || !age || !ratio) {
+			result.textContent = 'input all fields!';
+			return;
+		} else if (sex === 'female') {
+			result.textContent = Math.round((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio);
+		} else {
+			result.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio);
 		}
 	}
-	//6)вызов функции с передачей аргументов: переменная класса родителя даты на сайте и deadline(конечная дата отсчета)
-	setClock('.timer', deadline);
+	calcTotal();
 
+	function getStaticInformation(selector, activeClass) {
+		const elements = document.querySelectorAll(selector);
 
+		elements.forEach(elem => {
+			elem.addEventListener('click', (e) => {
 
-}
+				if (e.target.getAttribute('data-ratio')) {
+					ratio = +e.target.getAttribute('data-ratio');
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (timer);
+					//ложим в память браузера выбранные пользователем параметры
+					localStorage.setItem('ratio', +e.target.getAttribute('data-ratio'));
+				} else {
+					sex = e.target.getAttribute('id');
+					localStorage.setItem('sex', e.target.getAttribute('id'));
+				}
 
-/***/ })
+				calcTotal();
 
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
-(() => {
-/*!**********************!*\
-  !*** ./js/script.js ***!
-  \**********************/
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _modules_clone_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/clone.js */ "./js/modules/clone.js");
-/* harmony import */ var _modules_rest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/rest.js */ "./js/modules/rest.js");
-/* harmony import */ var _modules_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/modal */ "./js/modules/modal.js");
-/* harmony import */ var _modules_tabs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/tabs */ "./js/modules/tabs.js");
-/* harmony import */ var _modules_timer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/timer */ "./js/modules/timer.js");
-/* harmony import */ var _modules_cards__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/cards */ "./js/modules/cards.js");
-/* harmony import */ var _modules_calc__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/calc */ "./js/modules/calc.js");
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './modules / forms'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-/* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./modules/slider */ "./js/modules/slider.js");
+				elements.forEach(item => {
+					item.classList.remove(activeClass);
+				})
+				e.target.classList.add(activeClass);
+			})
+		})
+	}
 
+	getStaticInformation('#gender div', 'calculating__choose-item_active');
+	getStaticInformation('.calculating__choose_big div', 'calculating__choose-item_active');
 
+	function getDynamicInformation(selector) {
 
+		const input = document.querySelector(selector);
 
+		input.addEventListener('input', () => {
 
+			// ПРОВЕРКА НА НЕ ЧИСЛА	
+			if (input.value.match(/\D/)) {
+				input.style.border = '1px solid red';
+			} else {
+				input.style.border = 'none';
+			}
 
-
-
-
-
-
-
-window.addEventListener('DOMContentLoaded', () => {
-
-
-	(0,_modules_tabs__WEBPACK_IMPORTED_MODULE_3__["default"])();
-	(0,_modules_modal__WEBPACK_IMPORTED_MODULE_2__["default"])();
-	(0,_modules_timer__WEBPACK_IMPORTED_MODULE_4__["default"])();
-	(0,_modules_cards__WEBPACK_IMPORTED_MODULE_5__["default"])();
-	(0,_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])();
-	Object(function webpackMissingModule() { var e = new Error("Cannot find module './modules / forms'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())();
-	(0,_modules_slider__WEBPACK_IMPORTED_MODULE_8__["default"])();
-
-
-
-	// operatorRest();
-	// operatorSpread();
-	// requestFile();
+			switch (input.getAttribute('id')) {
+				case 'height':
+					height = +input.value;
+					break;
+				case 'weight':
+					weight = +input.value;
+					break;
+				case 'age':
+					age = +input.value;
+					break;
+			}
+			calcTotal();
+		});
+	}
+	getDynamicInformation('#height');
+	getDynamicInformation('#weight');
+	getDynamicInformation('#age');
 
 
 });
-})();
-
 /******/ })()
 ;
 //# sourceMappingURL=bundle.js.map

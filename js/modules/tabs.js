@@ -38,7 +38,6 @@ function tabs() {
 	hideTabsContent();
 	showTabsContent();
 
-
 }
 
 export default tabs;
