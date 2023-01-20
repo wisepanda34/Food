@@ -1,12 +1,13 @@
 import { openModal } from './modal.js';
 import { closeModal } from './modal.js';
+import { postData } from '../services/services.js';
 
-function forms(modalTimerId) {
+function forms(formSelector, modalTimerId) {
 
 	//============= FORMS ====================
 	//------отправка 'POST'-запроса на сервер  ---  
 
-	const forms = document.querySelectorAll('form');
+	const forms = document.querySelectorAll(formSelector);
 
 	//объект с информированием пользователя  о процессах
 	const message = {
@@ -19,19 +20,7 @@ function forms(modalTimerId) {
 		bindPostData(item);
 	});
 
-	//  функциональное выражение, отвечающее за отправку POST на сервер
-	const postData = async (url, data) => {
-		//fetch  возвращает промис, который помещаем в переменную res
-		const res = await fetch(url, {
-			method: 'POST',
-			headers: {
-				'Content-type': 'application/json'
-			},
-			body: data
-		});
 
-		return await res.json();
-	};
 
 	//функция отвечает за привязку постинга
 	function bindPostData(form) {

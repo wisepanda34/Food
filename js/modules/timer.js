@@ -1,9 +1,9 @@
-function timer() {
+function timer(id, deadline) {
 
 	//======================TIMER=================================
 
 	//1)дата окончания акции
-	const deadline = '2023-02-15';
+	// const deadline = '2023-02-15';
 
 	//2)функция вычисления сколько осталось милисекунд и разложение на дни, часы, минуты, секунды
 	function getTimeRemaining(endtime) {
@@ -60,7 +60,7 @@ function timer() {
 		}
 	}
 	//6)вызов функции с передачей аргументов: переменная класса родителя даты на сайте и deadline(конечная дата отсчета)
-	setClock('.timer', deadline);
+	setClock(id, deadline);
 
 
 
