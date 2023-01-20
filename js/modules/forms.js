@@ -1,4 +1,7 @@
-function forms() {
+import { openModal } from './modal.js';
+import { closeModal } from './modal.js';
+
+function forms(modalTimerId) {
 
 	//============= FORMS ====================
 	//------отправка 'POST'-запроса на сервер  ---  
@@ -20,7 +23,7 @@ function forms() {
 	const postData = async (url, data) => {
 		//fetch  возвращает промис, который помещаем в переменную res
 		const res = await fetch(url, {
-			method: "POST",
+			method: 'POST',
 			headers: {
 				'Content-type': 'application/json'
 			},
@@ -73,7 +76,7 @@ function forms() {
 		const prevModalDialog = document.querySelector('.modal__dialog');
 
 		prevModalDialog.classList.add('hide');
-		openModal();
+		openModal('.modal', modalTimerId);
 
 		const thanksModal = document.createElement('div');
 		thanksModal.classList.add('modal__dialog');
@@ -90,7 +93,7 @@ function forms() {
 			thanksModal.remove();
 			prevModalDialog.classList.add('show');
 			prevModalDialog.classList.remove('hide');
-			closeModal();
+			closeModal('.modal');
 
 		}, 2000);
 

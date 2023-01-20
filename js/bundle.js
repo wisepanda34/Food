@@ -1,194 +1,146 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-var __webpack_exports__ = {};
-/*!**********************!*\
-  !*** ./js/script.js ***!
-  \**********************/
+/******/ 	var __webpack_modules__ = ({
 
-// import { requestFile } from './modules/clone.js';
-// import { operatorRest, operatorSpread } from './modules/rest.js';
+/***/ "./js/modules/calc.js":
+/*!****************************!*\
+  !*** ./js/modules/calc.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-// import modal from './modules/modal';
-// import tabs from './modules/tabs';
-// import timer from './modules/timer';
-// import cards from './modules/cards';
-// import calc from './modules/calc';
-// import forms from './modules/forms';
-// import slider from './modules/slider';
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function calc() {
 
-window.addEventListener('DOMContentLoaded', () => {
+	// ==============  Calc  =======================
+	const result = document.querySelector('.calculating__result span');
+	let sex, weight, height, age, ratio;
 
-
-	// tabs();
-	// modal();
-	// timer();
-	// cards();
-	// calc();
-	// forms();
-	// slider();
-
-
-
-	// operatorRest();
-	// operatorSpread();
-	// requestFile();
-
-	//=========TABS====================================================
-	const tabs = document.querySelectorAll('.tabheader__item');
-	const tabParent = document.querySelector('.tabheader__items');
-	const tabsContent = document.querySelectorAll('.tabcontent');
-
-	function hideTabsContent() {
-		tabs.forEach(item => {
-			item.classList.remove('tabheader__item_active');
-		});
-
-		tabsContent.forEach(item => {
-			item.classList.remove('show', 'fade');
-			item.classList.add('hide');
-
-		});
+	if (localStorage.getItem('sex')) {
+		sex = localStorage.getItem('sex');
+	} else {
+		sex = 'female';
+		localStorage.setItem('sex', 'female');
 	}
 
-	function showTabsContent(i = 0) {
-		tabs[i].classList.add('tabheader__item_active');
-		tabsContent[i].classList.remove('hide');
-		tabsContent[i].classList.add('show', 'fade');
+	if (localStorage.getItem('ratio')) {
+		ratio = localStorage.getItem('ratio');
+	} else {
+		ratio = 1.375;
+		localStorage.setItem('retio', 1.375);
 	}
 
-	tabParent.addEventListener('click', (e) => {
-		e.preventDefault();
-		if (e.target && e.target.classList.contains('tabheader__item')) {
-			tabs.forEach((item, i) => {
-				if (e.target == item) {
-					hideTabsContent();
-					showTabsContent(i);
-				}
-			});
-		}
-	});
+	function initLocalSettings(selector, activeClass) {
+		const elements = document.querySelectorAll(selector);
 
-	hideTabsContent();
-	showTabsContent();
-
-	//======================TIMER=================================
-
-	//1)дата окончания акции
-	const deadline = '2023-02-15';
-
-	//2)функция вычисления сколько осталось милисекунд и разложение на дни, часы, минуты, секунды
-	function getTimeRemaining(endtime) {
-
-		const t = Date.parse(endtime) - Date.parse(new Date());
-		const days = Math.floor(t / (1000 * 60 * 60 * 24));
-		const hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-		const minuts = Math.floor((t / 1000 / 60) % 60);
-		const seconds = Math.floor((t / 1000) % 60);
-
-		return {
-			'total': t,
-			'days': days,
-			'hours': hours,
-			'minuts': minuts,
-			'seconds': seconds
-		};
-	}
-	//5)функция помощник проверки на односимвольное число и возрат если нужно с нулем впереди
-	function getZero(num) {
-		if (num >= 0 && num < 10) {
-			return `0${num}`;
-		} else {
-			return num;
-		}
-	}
-
-	//3)функция связывания коллекции по клаасу и #id, запуск setInterval
-	function setClock(selector, endtime) {
-		const timer = document.querySelector(selector),
-			days = timer.querySelector('#days'),
-			hours = timer.querySelector('#hours'),
-			minuts = timer.querySelector('#minutes'),
-			seconds = timer.querySelector('#seconds'),
-			timeInterval = setInterval(updateClock, 1000);
-
-		//для мгновенного обновления даты на сайте вызываем функцию updateClock() сразу при загрузке страницы
-		updateClock();
-
-		//4)функция обновления данных остатка времени на сайте: запрос на функцию вычисления с аргументом конечного времени, присваивание возвращенных данных с предварительной проверкой функцией-помощником, проверка на окончание отсчета и прерывание таймера
-		function updateClock() {
-			const t = getTimeRemaining(endtime);
-
-			//добавление нуля к однозначным числам
-			days.innerHTML = getZero(t.days);
-			hours.innerHTML = getZero(t.hours);
-			minuts.innerHTML = getZero(t.minuts);
-			seconds.innerHTML = getZero(t.seconds);
-
-
-			if (t.total <= 0) {
-				clearInterval(timeInterval);
+		elements.forEach(elem => {
+			elem.classList.remove(activeClass);
+			if (elem.getAttribute('id') === localStorage.getItem('sex')) {
+				elem.classList.add(activeClass);
 			}
-		}
-	}
-	//6)вызов функции с передачей аргументов: переменная класса родителя даты на сайте и deadline(конечная дата отсчета)
-	setClock('.timer', deadline);
-
-
-	//=============  MODAL  ====================
-
-	const modal = document.querySelector('.modal');
-	const modalTrigger = document.querySelectorAll('[data-modal]');
-	// const modalCloseCross = document.querySelector('[data-close]');//убираем т.к. это не работает с динамическим объектом закрытия
-
-
-	function openModal() {
-		modal.classList.add('show');
-		document.body.style.overflow = 'hidden';
-		//если пользователь самостоятельно откроет модалку раньше чем произойдет автовызов, то автовызов мы отключаем
-		clearInterval(modalTimerId);
-	};
-
-	function closeModal() {
-		modal.classList.remove('show');
-		document.body.style.overflow = '';
+			if (elem.getAttribute('data-ratio') === localStorage.getItem('ratio')) {
+				elem.classList.add(activeClass);
+			}
+		})
 	}
 
-	modalTrigger.forEach(item => {
-		item.addEventListener('click', openModal);
-	});
+	initLocalSettings('#gender div', 'calculating__choose-item_active');
+	initLocalSettings('.calculating__choose_big div', 'calculating__choose-item_active');
 
-	// modalCloseCross.addEventListener('click', closeModal);
 
-	modal.addEventListener('click', (e) => {
-		//добавляем в условие клик по любому объекту с атрибутом 'data-close' в том числе и динамические
-		if (e.target === modal || e.target.getAttribute('data-close') == '') {
-			closeModal();
-		}
-	});
 
-	document.addEventListener('keydown', (e) => {
-
-		if (e.code === "Escape" && modal.classList.contains('show')) {
-			closeModal();
-		}
-	});
-
-	//автовызов функции 
-	const modalTimerId = setTimeout(openModal, 50000);
-
-	//функция вызова модального окна при досклолливании до низа сайта
-	function modalByScroll() {
-		if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
-			openModal();
-
-			//для предупреждения повторного открытия модального окна при концевом скроллинге
-			window.removeEventListener('scroll', modalByScroll);
+	function calcTotal() {
+		if (!sex || !weight || !height || !age || !ratio) {
+			result.textContent = 'input all fields!';
+			return;
+		} else if (sex === 'female') {
+			result.textContent = Math.round((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio);
+		} else {
+			result.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio);
 		}
 	}
+	calcTotal();
 
-	// автовызов модального окна при проскролле до низа сайта
-	window.addEventListener('scroll', modalByScroll);
+	function getStaticInformation(selector, activeClass) {
+		const elements = document.querySelectorAll(selector);
 
+		elements.forEach(elem => {
+			elem.addEventListener('click', (e) => {
+
+				if (e.target.getAttribute('data-ratio')) {
+					ratio = +e.target.getAttribute('data-ratio');
+
+					//ложим в память браузера выбранные пользователем параметры
+					localStorage.setItem('ratio', +e.target.getAttribute('data-ratio'));
+				} else {
+					sex = e.target.getAttribute('id');
+					localStorage.setItem('sex', e.target.getAttribute('id'));
+				}
+
+				calcTotal();
+
+				elements.forEach(item => {
+					item.classList.remove(activeClass);
+				})
+				e.target.classList.add(activeClass);
+			})
+		})
+	}
+
+	getStaticInformation('#gender div', 'calculating__choose-item_active');
+	getStaticInformation('.calculating__choose_big div', 'calculating__choose-item_active');
+
+	function getDynamicInformation(selector) {
+
+		const input = document.querySelector(selector);
+
+		input.addEventListener('input', () => {
+
+			// ПРОВЕРКА НА НЕ ЧИСЛА	
+			if (input.value.match(/\D/)) {
+				input.style.border = '1px solid red';
+			} else {
+				input.style.border = 'none';
+			}
+
+			switch (input.getAttribute('id')) {
+				case 'height':
+					height = +input.value;
+					break;
+				case 'weight':
+					weight = +input.value;
+					break;
+				case 'age':
+					age = +input.value;
+					break;
+			}
+			calcTotal();
+		});
+	}
+	getDynamicInformation('#height');
+	getDynamicInformation('#weight');
+	getDynamicInformation('#age');
+
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (calc);
+
+/***/ }),
+
+/***/ "./js/modules/cards.js":
+/*!*****************************!*\
+  !*** ./js/modules/cards.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function cards() {
 
 	//===========  class for cards ====================================================
 	// --- GET-запрос,
@@ -227,6 +179,28 @@ window.addEventListener('DOMContentLoaded', () => {
 		});
 	};
 
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (cards);
+
+/***/ }),
+
+/***/ "./js/modules/forms.js":
+/*!*****************************!*\
+  !*** ./js/modules/forms.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _modal_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal.js */ "./js/modules/modal.js");
+
+
+
+function forms(modalTimerId) {
+
 	//============= FORMS ====================
 	//------отправка 'POST'-запроса на сервер  ---  
 
@@ -247,7 +221,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	const postData = async (url, data) => {
 		//fetch  возвращает промис, который помещаем в переменную res
 		const res = await fetch(url, {
-			method: "POST",
+			method: 'POST',
 			headers: {
 				'Content-type': 'application/json'
 			},
@@ -300,7 +274,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		const prevModalDialog = document.querySelector('.modal__dialog');
 
 		prevModalDialog.classList.add('hide');
-		openModal();
+		(0,_modal_js__WEBPACK_IMPORTED_MODULE_0__.openModal)('.modal', modalTimerId);
 
 		const thanksModal = document.createElement('div');
 		thanksModal.classList.add('modal__dialog');
@@ -317,12 +291,114 @@ window.addEventListener('DOMContentLoaded', () => {
 			thanksModal.remove();
 			prevModalDialog.classList.add('show');
 			prevModalDialog.classList.remove('hide');
-			closeModal();
+			(0,_modal_js__WEBPACK_IMPORTED_MODULE_0__.closeModal)('.modal');
 
 		}, 2000);
 
 	};
 
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (forms);
+
+/***/ }),
+
+/***/ "./js/modules/modal.js":
+/*!*****************************!*\
+  !*** ./js/modules/modal.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "closeModal": () => (/* binding */ closeModal),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "openModal": () => (/* binding */ openModal)
+/* harmony export */ });
+function openModal(modalSelector, modalTimerId) {
+	const modal = document.querySelector(modalSelector);
+	modal.classList.add('show');
+	document.body.style.overflow = 'hidden';
+	console.log(modalTimerId);
+	//если пользователь самостоятельно откроет модалку раньше чем произойдет автовызов, то автовызов мы отключаем
+	if (modalTimerId) {
+		clearInterval(modalTimerId);
+	}
+};
+
+function closeModal(modalSelector) {
+	const modal = document.querySelector(modalSelector);
+	modal.classList.remove('show');
+	document.body.style.overflow = '';
+}
+
+
+function modal(triggerSelector, modalSelector, modalTimerId) {
+
+
+	//=============  MODAL  ====================
+
+	const modal = document.querySelector(modalSelector);
+	const modalTrigger = document.querySelectorAll(triggerSelector);
+	// const modalCloseCross = document.querySelector('[data-close]');//убираем т.к. это не работает с динамическим объектом закрытия
+
+
+
+	modalTrigger.forEach(item => {
+		item.addEventListener('click', () => openModal(modalSelector, modalTimerId));
+	});
+
+	// modalCloseCross.addEventListener('click', closeModal);
+
+	modal.addEventListener('click', (e) => {
+		//добавляем в условие клик по любому объекту с атрибутом 'data-close' в том числе и динамические
+		if (e.target === modal || e.target.getAttribute('data-close') == '') {
+			closeModal(modalSelector);
+		}
+	});
+
+	document.addEventListener('keydown', (e) => {
+
+		if (e.code === "Escape" && modal.classList.contains('show')) {
+			closeModal(modalSelector);
+		}
+	});
+
+
+	//функция вызова модального окна при досклолливании до низа сайта
+	function modalByScroll() {
+		if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+			openModal(modalSelector, modalTimerId);
+
+			//для предупреждения повторного открытия модального окна при концевом скроллинге
+			window.removeEventListener('scroll', modalByScroll);
+		}
+	}
+
+	// автовызов модального окна при проскролле до низа сайта
+	window.addEventListener('scroll', modalByScroll);
+
+
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (modal);
+ 
+
+/***/ }),
+
+/***/ "./js/modules/slider.js":
+/*!******************************!*\
+  !*** ./js/modules/slider.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function slider() {
 
 	//================  SLIDER  =============================
 
@@ -480,117 +556,255 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	// ==============  Calc  =======================
-	const result = document.querySelector('.calculating__result span');
-	let sex, weight, height, age, ratio;
 
-	if (localStorage.getItem('sex')) {
-		sex = localStorage.getItem('sex');
-	} else {
-		sex = 'female';
-		localStorage.setItem('sex', 'female');
-	}
+}
 
-	if (localStorage.getItem('ratio')) {
-		ratio = localStorage.getItem('ratio');
-	} else {
-		ratio = 1.375;
-		localStorage.setItem('retio', 1.375);
-	}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (slider);
 
-	function initLocalSettings(selector, activeClass) {
-		const elements = document.querySelectorAll(selector);
+/***/ }),
 
-		elements.forEach(elem => {
-			elem.classList.remove(activeClass);
-			if (elem.getAttribute('id') === localStorage.getItem('sex')) {
-				elem.classList.add(activeClass);
-			}
-			if (elem.getAttribute('data-ratio') === localStorage.getItem('ratio')) {
-				elem.classList.add(activeClass);
-			}
-		})
-	}
+/***/ "./js/modules/tabs.js":
+/*!****************************!*\
+  !*** ./js/modules/tabs.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-	initLocalSettings('#gender div', 'calculating__choose-item_active');
-	initLocalSettings('.calculating__choose_big div', 'calculating__choose-item_active');
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function tabs() {
 
+	//=========TABS====================================================
+	const tabs = document.querySelectorAll('.tabheader__item');
+	const tabParent = document.querySelector('.tabheader__items');
+	const tabsContent = document.querySelectorAll('.tabcontent');
 
+	function hideTabsContent() {
+		tabs.forEach(item => {
+			item.classList.remove('tabheader__item_active');
+		});
 
-	function calcTotal() {
-		if (!sex || !weight || !height || !age || !ratio) {
-			result.textContent = 'input all fields!';
-			return;
-		} else if (sex === 'female') {
-			result.textContent = Math.round((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio);
-		} else {
-			result.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio);
-		}
-	}
-	calcTotal();
+		tabsContent.forEach(item => {
+			item.classList.remove('show', 'fade');
+			item.classList.add('hide');
 
-	function getStaticInformation(selector, activeClass) {
-		const elements = document.querySelectorAll(selector);
-
-		elements.forEach(elem => {
-			elem.addEventListener('click', (e) => {
-
-				if (e.target.getAttribute('data-ratio')) {
-					ratio = +e.target.getAttribute('data-ratio');
-
-					//ложим в память браузера выбранные пользователем параметры
-					localStorage.setItem('ratio', +e.target.getAttribute('data-ratio'));
-				} else {
-					sex = e.target.getAttribute('id');
-					localStorage.setItem('sex', e.target.getAttribute('id'));
-				}
-
-				calcTotal();
-
-				elements.forEach(item => {
-					item.classList.remove(activeClass);
-				})
-				e.target.classList.add(activeClass);
-			})
-		})
-	}
-
-	getStaticInformation('#gender div', 'calculating__choose-item_active');
-	getStaticInformation('.calculating__choose_big div', 'calculating__choose-item_active');
-
-	function getDynamicInformation(selector) {
-
-		const input = document.querySelector(selector);
-
-		input.addEventListener('input', () => {
-
-			// ПРОВЕРКА НА НЕ ЧИСЛА	
-			if (input.value.match(/\D/)) {
-				input.style.border = '1px solid red';
-			} else {
-				input.style.border = 'none';
-			}
-
-			switch (input.getAttribute('id')) {
-				case 'height':
-					height = +input.value;
-					break;
-				case 'weight':
-					weight = +input.value;
-					break;
-				case 'age':
-					age = +input.value;
-					break;
-			}
-			calcTotal();
 		});
 	}
-	getDynamicInformation('#height');
-	getDynamicInformation('#weight');
-	getDynamicInformation('#age');
+
+	function showTabsContent(i = 0) {
+		tabs[i].classList.add('tabheader__item_active');
+		tabsContent[i].classList.remove('hide');
+		tabsContent[i].classList.add('show', 'fade');
+	}
+
+	tabParent.addEventListener('click', (e) => {
+		e.preventDefault();
+		if (e.target && e.target.classList.contains('tabheader__item')) {
+			tabs.forEach((item, i) => {
+				if (e.target == item) {
+					hideTabsContent();
+					showTabsContent(i);
+				}
+			});
+		}
+	});
+
+	hideTabsContent();
+	showTabsContent();
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (tabs);
+
+/***/ }),
+
+/***/ "./js/modules/timer.js":
+/*!*****************************!*\
+  !*** ./js/modules/timer.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function timer() {
+
+	//======================TIMER=================================
+
+	//1)дата окончания акции
+	const deadline = '2023-02-15';
+
+	//2)функция вычисления сколько осталось милисекунд и разложение на дни, часы, минуты, секунды
+	function getTimeRemaining(endtime) {
+
+		const t = Date.parse(endtime) - Date.parse(new Date());
+		const days = Math.floor(t / (1000 * 60 * 60 * 24));
+		const hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+		const minuts = Math.floor((t / 1000 / 60) % 60);
+		const seconds = Math.floor((t / 1000) % 60);
+
+		return {
+			'total': t,
+			'days': days,
+			'hours': hours,
+			'minuts': minuts,
+			'seconds': seconds
+		};
+	}
+	//5)функция помощник проверки на односимвольное число и возрат если нужно с нулем впереди
+	function getZero(num) {
+		if (num >= 0 && num < 10) {
+			return `0${num}`;
+		} else {
+			return num;
+		}
+	}
+
+	//3)функция связывания коллекции по клаасу и #id, запуск setInterval
+	function setClock(selector, endtime) {
+		const timer = document.querySelector(selector),
+			days = timer.querySelector('#days'),
+			hours = timer.querySelector('#hours'),
+			minuts = timer.querySelector('#minutes'),
+			seconds = timer.querySelector('#seconds'),
+			timeInterval = setInterval(updateClock, 1000);
+
+		//для мгновенного обновления даты на сайте вызываем функцию updateClock() сразу при загрузке страницы
+		updateClock();
+
+		//4)функция обновления данных остатка времени на сайте: запрос на функцию вычисления с аргументом конечного времени, присваивание возвращенных данных с предварительной проверкой функцией-помощником, проверка на окончание отсчета и прерывание таймера
+		function updateClock() {
+			const t = getTimeRemaining(endtime);
+
+			//добавление нуля к однозначным числам
+			days.innerHTML = getZero(t.days);
+			hours.innerHTML = getZero(t.hours);
+			minuts.innerHTML = getZero(t.minuts);
+			seconds.innerHTML = getZero(t.seconds);
+
+
+			if (t.total <= 0) {
+				clearInterval(timeInterval);
+			}
+		}
+	}
+	//6)вызов функции с передачей аргументов: переменная класса родителя даты на сайте и deadline(конечная дата отсчета)
+	setClock('.timer', deadline);
+
+
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (timer);
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+/*!**********************!*\
+  !*** ./js/script.js ***!
+  \**********************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _modules_modal_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/modal.js */ "./js/modules/modal.js");
+/* harmony import */ var _modules_tabs_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/tabs.js */ "./js/modules/tabs.js");
+/* harmony import */ var _modules_timer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/timer.js */ "./js/modules/timer.js");
+/* harmony import */ var _modules_cards_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/cards.js */ "./js/modules/cards.js");
+/* harmony import */ var _modules_calc_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/calc.js */ "./js/modules/calc.js");
+/* harmony import */ var _modules_forms_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/forms.js */ "./js/modules/forms.js");
+/* harmony import */ var _modules_slider_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/slider.js */ "./js/modules/slider.js");
+
+// import { requestFile } from './modules/clone.js';
+// import { operatorRest, operatorSpread } from './modules/rest.js';
+
+
+
+
+
+
+
+
+
+
+window.addEventListener('DOMContentLoaded', () => {
+	//автовызов функции 
+	const modalTimerId = setTimeout(() => (0,_modules_modal_js__WEBPACK_IMPORTED_MODULE_0__.openModal)('.modal', modalTimerId), 50000);
+
+	(0,_modules_tabs_js__WEBPACK_IMPORTED_MODULE_1__["default"])();
+	(0,_modules_modal_js__WEBPACK_IMPORTED_MODULE_0__["default"])('[data-modal]', '.modal', modalTimerId);
+	(0,_modules_timer_js__WEBPACK_IMPORTED_MODULE_2__["default"])();
+	(0,_modules_cards_js__WEBPACK_IMPORTED_MODULE_3__["default"])();
+	(0,_modules_calc_js__WEBPACK_IMPORTED_MODULE_4__["default"])();
+	(0,_modules_forms_js__WEBPACK_IMPORTED_MODULE_5__["default"])(modalTimerId);
+	(0,_modules_slider_js__WEBPACK_IMPORTED_MODULE_6__["default"])();
+
+
+	// operatorRest();
+	// operatorSpread();
+	// requestFile();
 
 
 });
+})();
+
 /******/ })()
 ;
 //# sourceMappingURL=bundle.js.map
